@@ -14,11 +14,12 @@ DB_PASS = "admin"
 def get_db_connection():
     try:
         conn = psycopg2.connect(
-            host=DB_HOST
+            host=DB_HOST,
             database=DB_NAME,
             user=DB_USER,
             password=DB_PASS
         )
+        
         return conn
     except Exception as e:
         print(f" errore di connessione al database: {e}")
