@@ -1,32 +1,45 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from db import execute_query
+from model import db, Marchio, Modello 
 
 app = Flask(__name__)
-CORS(app) # Permette al frontend (Vite) di comunicare con questo backend senza blocchi di sicurezza
+CORS(app)
 
-# --- ROTTE API ---
 
-# Rotta di test (Home)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/configuratore_auto'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+db.init_app(app)
+
+
 @app.route('/', methods=['GET'])
 def home():
-    return jsonify({"messaggio": "Backend del Configuratore Auto attivo e funzionante!"})
-
+    return jsonify({"messaggio": "SQLAlchemy attivo!"})
 
 @app.route('/api/marchi', methods=['GET'])
 def get_marchi():
-    query = "SELECT * FROM marchi ORDER BY nome_marchio ASC;"
-    risultato = execute_query(query)
-    
-    # Se c'è un errore nella query (es. tabella non trovata o password errata)
-    if isinstance(risultato, dict) and "error" in risultato:
-        return jsonify({"success": False, "errore": risultato["error"]}), 500
+    try:
+        lista_marchi = Marchio.query.order_by(Marchio.nome_marchio).all()
         
-    return jsonify({
-        "success": True, 
-        "dati": raggruppamento_marchi(risultato) if 'raggruppamento_marchi' in globals() else risultato
-    }), 200
+        risultato = [marchio.to_dict() for marchio in lista_marchi]
+        
+        return jsonify({"success": True, "dati": risultato}), 200
+        
+    except Exception as e:
+        return jsonify({"success": False, "errore": str(e)}), 500
+
+@app.route('/api/modelli/<int:id_marchio_scelto>', methods=['GET'])
+def get_modelli_by_marchio(id_marchio_scelto):
+    try:
+        lista_modelli = Modello.query.filter_by(id_marchio=id_marchio_scelto).all()
+        
+        risultato = [modello.to_dict() for modello in lista_modelli]
+        return jsonify({"success": True, "dati": risultato}), 200
+        
+    except Exception as e:
+        return jsonify({"success": False, "errore": str(e)}), 500
+
 
 if __name__ == '__main__':
-    # Il server si accende sulla porta 5000 in modalità di debug (si riavvia da solo se modifichi il codice)
     app.run(debug=True, port=5000)
