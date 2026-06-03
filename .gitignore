@@ -1,3 +1,9 @@
 # cartlella venv
-
 venv/
+
+
+#cartella pycache
+__pycache__/
+
+
+
