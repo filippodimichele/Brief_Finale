@@ -23,6 +23,12 @@ def init_db():
     import model.preventivo
     import model.ruolo
     import model.utente
+
+    Base.metadata.create_all(bind=engine)
+
+
+    def get_session():
+        return SessionLocal()
     
 
 
