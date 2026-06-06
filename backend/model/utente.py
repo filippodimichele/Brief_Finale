@@ -6,8 +6,11 @@ from persistence.db_confing import Base
 class Utente(Base):
     __tablename__ = "utenti"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id_utente = Column(Integer, primary_key=True, autoincrement=True)
+    id_ruolo = Column(Integer, ForeignKey("ruoli.id_ruolo"), nullable=False)
+    ruolo = relationship("Ruolo", back_populates="utenti")
     nome = Column(String(50), nullable=False)
+
     cognome = Column(String(50), nullable=False)
     email = Column(String(100), nullable=False)
     password = Column(String(200), nullable=False)

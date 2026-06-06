@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Stirng, Table,ForeignKey
+from sqlalchemy import Column, Integer, String, Table,ForeignKey
 from sqlalchemy.orm import relationship
 from persistence.db_confing import Base
 
@@ -9,7 +9,7 @@ class Ruolo(Base):
 
 
 id_ruolo = Column(Integer, primary_key=True, autoincrement=True)
-nome_ruolo = Column(Stirng(50))
+nome_ruolo = Column(String(50))
 utenti = relationship("Utente", back_populates="ruolo") #usiamo il parametro back_populates per la sincronizzazione in tempo reale dei dati in memoria
 
 

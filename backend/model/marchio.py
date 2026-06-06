@@ -3,20 +3,19 @@ from sqlalchemy.orm import relationship
 from persistence.db_confing import Base
 
 class Marchio(Base):
-    __table__ = "marchi"
+    __tablename__ = "marchi"
 
     id_marchio = Column(Integer, primary_key=True, autoincrement=True)
     nome_marchio = Column(String(50), nullable=False, unique=True)
+    paese_origine = Column(String(50), nullable=False)
 
-    #modelli ha una relazione 1:N
+    # relazione uno-a-molti con i modelli
     modelli = relationship("Modello", back_populates="marchio")
 
-
-
-    def __repr__(self):
-        return f"Marchio(id={self.id_marchio}, nome'{self.nome_marchio}')"
-    
-    def __str__(self):
-        return f"{self.nome_marchio}"
-    
-  
+    def to_dict(self):
+        # converte il marchio in dizionario
+        return {
+            "id_marchio": self.id_marchio,
+            "nome_marchio": self.nome_marchio,
+            "paese_origine": self.paese_origine
+        }
