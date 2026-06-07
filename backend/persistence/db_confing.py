@@ -4,12 +4,14 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 class Base(DeclarativeBase):
     pass
 
-engine = create_engine("postgresql://postgres@localhost/configurazione_auto", echo=True)
+DB_URL = "postgresql://postgres:admin@localhost:5432/configuratore_auto"
+engine = create_engine(DB_URL, echo=True)
+
 
 SessionLocal = sessionmaker(bind=engine)
 
 def get_session():
-    # restituisce una nuova sessione di lavoro con il database
+    # restituisce una nuova sessione con il database
     return SessionLocal()
 
 def init_db():
