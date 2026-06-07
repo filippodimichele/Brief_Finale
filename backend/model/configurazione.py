@@ -13,17 +13,18 @@ configurazioni_optional = Table(
 class Configurazione(Base):
     __tablename__ = "configurazioni"
 
+    # definizione delle colonne (Prima la Primary Key)
     id_configurazione = Column(Integer, primary_key=True, autoincrement=True)
     id_utente = Column(Integer, ForeignKey("utenti.id_utente"), nullable=False)
     id_abbinamento = Column(Integer, ForeignKey("abbinamenti_catalogo.id_abbinamento"), nullable=False)
 
-    # relazioni
+    # relazioni (Definite una sola volta)
     utente = relationship("Utente", back_populates="configurazioni")
     abbinamento = relationship("AbbinamentoCatalogo")
     optional_scelti = relationship("Optional", secondary=configurazioni_optional)
 
     def to_dict(self):
-        # converte la configurazione in dizionario per la serializzazione
+            
         return {
             "id_configurazione": self.id_configurazione,
             "id_utente": self.id_utente,

@@ -9,11 +9,9 @@ class Marchio(Base):
     nome_marchio = Column(String(50), nullable=False, unique=True)
     paese_origine = Column(String(50), nullable=False)
 
-    # relazione uno-a-molti con i modelli
     modelli = relationship("Modello", back_populates="marchio")
 
     def to_dict(self):
-        # converte il marchio in dizionario
         return {
             "id_marchio": self.id_marchio,
             "nome_marchio": self.nome_marchio,
