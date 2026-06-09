@@ -1,7 +1,9 @@
 import DOM, { withPlugins } from "just-dom";
+import { createRouterPlugin } from "@just-dom/router";
+import { lucidePlugin } from "@just-dom/lucide";
 
-/**
- * Central app DOM — add official plugins (e.g. `@just-dom/router`) here.
- * @see https://just-dom.vercel.app/docs/jd-config
- */
-export const jd = withPlugins(DOM, []);
+const router = createRouterPlugin();
+
+// @just-dom/signals — import { createSignal, reactive, effect, computed } where needed
+
+export const jd = withPlugins(DOM, [router, lucidePlugin]);

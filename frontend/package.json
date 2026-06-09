@@ -15,6 +15,8 @@
     "vite": "^8.0.12"
   },
   "dependencies": {
+    "@just-dom/lucide": "^1.1.1",
+    "@just-dom/router": "^1.1.0",
     "just-dom": "^2.1.2"
   }
 }
