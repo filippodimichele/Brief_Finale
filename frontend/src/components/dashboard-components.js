@@ -48,12 +48,12 @@ export function DashBoardPage() {
     ]),
     jd.div({ className: "flex-1 w-full flex flex-col items-center" }, [
       jd.img({
-        src: "/body.png",
+        src: "/image.png",
         alt: "Body Content 1",
         className: "max-w-max h-100 object-contain rounded-box shadow-lg"
       }),
       jd.img({
-        src: "/body-2.png",
+        src: "/image-2.png",
         alt: "Body Content 2",
         className: "w-full h-auto object-cover"
       })
