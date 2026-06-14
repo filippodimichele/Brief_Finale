@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="/image/logo.png" alt="Fillantis Logo" width="300">
+  <img src="/frontend/image/logo.png" alt="Fillantis Logo" width="300">
 </p>
 
 # Fillantis - Showroom & Configuratore Automobilistico
