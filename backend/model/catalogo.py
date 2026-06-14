@@ -24,6 +24,7 @@ class AbbinamentoCatalogo(Base):
     optional_disponibili = relationship("Optional", secondary=abbinamenti_optional, back_populates="abbinamenti")
     allestimento = relationship("Allestimento", back_populates="abbinamenti")
     motorizzazione = relationship("Motorizzazione", back_populates="abbinamenti")
+    modello = relationship("Modello")
 
     def to_dict(self):
         # converte l'abbinamento in dizionario

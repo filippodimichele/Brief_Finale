@@ -10,11 +10,5 @@ from model.preventivo import Preventivo
 from model.ruolo import Ruolo
 from model.utente import Utente
 
-def init_database():
-    print("[LOG] - Creazione tabelle nel database...")
-    # crea le tabelle basandosi sulle classi ereditate da Base
-    Base.metadata.create_all(bind=engine)
-    print("[LOG] - Database pronto.")
 
-if __name__ == "__main__":
-    init_database()
+

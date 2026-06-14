@@ -12,7 +12,6 @@ def get_by_id(session, id_preventivo):
 def add(session, preventivo):
     # salva un nuovo preventivo
     session.add(preventivo)
-    session.commit()
 
 def delete(session, id_preventivo):
     # elimina un preventivo dal database
@@ -20,3 +19,7 @@ def delete(session, id_preventivo):
     if preventivo:
         session.delete(preventivo)
         session.commit()
+
+def get_by_utente(session, id_utente):
+    # recupera tutti i preventivi associati a un singolo utente specifico
+    return session.execute(select(Preventivo).filter_by(id_utente=id_utente)).scalars().all()

@@ -20,3 +20,7 @@ def delete(session, id_utente):
     if utente:
         session.delete(utente)
         session.commit()
+
+def get_by_email(session, email):
+    # cerca un utente nel database tramite la sua email
+    return session.execute(select(Utente).filter_by(email=email)).scalar_one_or_none()
