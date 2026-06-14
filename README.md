@@ -7,7 +7,7 @@
 
 Applicazione full-stack per la gestione di uno showroom automobilistico multibrand e la configurazione guidata di veicoli con controllo in tempo reale delle incompatibilità degli optional e salvataggio dei preventivi personalizzati.
 
-Il progetto unisce un'architettura backend robusta in **Python Flask (MVC)** con autenticazione JWT e database relazionale PostgreSQL, e un frontend **Single Page Application (SPA)** nativo ad alte prestazioni realizzato con la libreria **just-dom**.
+Il progetto unisce un'architettura backend robusta in **Python Flask (MVC)** con autenticazione JWT e database relazionale PostgreSQL, e un frontend nativo ad alte prestazioni realizzato con la libreria **JUST-DOM**.
 
 ---
 
