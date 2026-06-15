@@ -14,6 +14,9 @@ export function PreventiviPage() {
       name: localStorage.getItem("userName") || "Ospite"
     };
 
+    // recuperiamo il token jwt salvato al login per autenticare le richieste
+    const token = localStorage.getItem("token");
+
     const currentPath = window.location.pathname;
 
     // controllo di sicurezza per la rotta admin
@@ -34,7 +37,12 @@ export function PreventiviPage() {
           ? "http://localhost:5000/api/preventivi/admin"
           : `http://localhost:5000/api/preventivi/utente/${currentUser.id}`;
 
-        const response = await fetch(urlAPI);
+        const response = await fetch(urlAPI, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
         const result = await response.json();
         
         if (result.success) {
@@ -77,7 +85,10 @@ export function PreventiviPage() {
       try {
         const response = await fetch(`http://localhost:5000/api/preventivi/${idPreventivo}/stato`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
           body: JSON.stringify({ stato: nuovoStato })
         });
         const result = await response.json();
@@ -94,19 +105,22 @@ export function PreventiviPage() {
       }
     };
 
-    // NUOVA: funzione per l'admin per eliminare fisicamente un preventivo dal database
+    // funzione per l'admin per eliminare fisicamente un preventivo dal database
     const eliminaPreventivo = async (idPreventivo) => {
       if (!confirm("Sei sicuro di voler eliminare definitivamente questo preventivo dal sistema? L'azione cancellera a cascata anche gli optional collegati.")) return;
       
       showLoader("eliminazione record in corso...");
       try {
         const response = await fetch(`http://localhost:5000/api/preventivi/${idPreventivo}`, {
-          method: "DELETE"
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
         });
         const result = await response.json();
         
         if (result.success) {
-          await renderContent(); // rinfresca la tabella
+          await renderContent(); 
         } else {
           alert("errore durante l'eliminazione: " + result.errore);
         }
@@ -191,26 +205,13 @@ export function PreventiviPage() {
                       if (p.stato === "rifiutato") badgeClass = "bg-red-50 text-red-700 border-red-200";
 
                       return jd.tr({ className: "hover:bg-neutral-50/50 transition-colors" }, [
-                        // 1. cella id
                         jd.td({ className: "p-4 font-mono text-xs text-neutral-500" }, [`PREV-00${p.id_preventivo}`]),
-                        
-                        // 2. cella nome cliente (legge dinamicamente il nome ritornato dal backend admin)
                         isAdmin ? jd.td({ className: "p-4 text-neutral-950 font-bold text-xs uppercase" }, [p.nome_cliente || "Utente"]) : null,
-                        
-                        // 3. cella configurazione auto
                         jd.td({ className: "p-4 text-neutral-950 font-bold" }, [p.auto_dettaglio || `Modello #${p.id_abbinamento}`]),
-                        
-                        // 4. cella prezzo totale
                         jd.td({ className: "p-4 text-right text-red-600 font-bold" }, [`${p.prezzo_totale.toLocaleString('it-IT')} €`]),
-                        
-                        // 5. cella stato
                         jd.td({ className: "p-4 text-center" }, [
-                          jd.span({ 
-                            className: `px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${badgeClass}`
-                          }, [p.stato])
+                          jd.span({ className: `px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${badgeClass}` }, [p.stato])
                         ]),
-
-                        // 6. cella azioni estesa (approva, rifiuta ed elimina record)
                         isAdmin ? jd.td({ className: "p-4 text-center" }, [
                           jd.div({ className: "flex items-center justify-center gap-2" }, [
                             jd.button({
@@ -230,14 +231,12 @@ export function PreventiviPage() {
                             ])
                           ])
                         ]) : null
-
                       ].filter(Boolean));
                     })
                   )
                 ])
               ])
             ]),
-
             isAdmin ? jd.div({ className: "mt-4 flex flex-col gap-4 text-left" }, [
               jd.h3({ className: "text-lg font-bold text-neutral-950 uppercase tracking-wide flex items-center gap-2" }, [
                 jd.lucide("History", { className: "size-5 text-red-600" }),

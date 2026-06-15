@@ -27,7 +27,7 @@ export function LoginPage() {
 
     try {
       // invio delle credenziali reali al database tramite flask
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -38,6 +38,8 @@ export function LoginPage() {
 
       if (result.success) {
         const utente = result.utente;
+
+        localStorage.setItem("token", result.token);
 
         // salvataggio dei dati dinamici dell'utente restituiti dal database
         localStorage.setItem("userId", utente.id_utente);

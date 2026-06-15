@@ -22,7 +22,6 @@ const regoleIncompatibilita = [
   { a: "me-p1", b: "me-p3" }    // mercedes: pack amg advanced esclude audio burmester
 ];
 
-// corretto: rinominata la funzione in configuratorpage per allinearla all import del router
 export function ConfiguratorPage() {
   const container = jd.div({ className: "h-screen bg-neutral-950 text-white flex flex-col overflow-hidden select-text" });
 
@@ -44,7 +43,7 @@ export function ConfiguratorPage() {
       "Grande Panda": [
         { id: "gp-b", name: "1.2 Turbo 100 CV - Manuale 6 marce - Trazione Anteriore", price: 18900 },
         { id: "gp-mhev", name: "1.2 Hybrid 100 CV - Automatico eDCT6 - Trazione Anteriore", price: 21400 },
-        { id: "gp-bev", name: "Elettrica 113 CV - Automatico monomarce - Trazione Anteriore", price: 24900 }
+        { id: "gp-bev", name: "Elettrica 113 CV - Automatico monamarce - Trazione Anteriore", price: 24900 }
       ],
       "500": [
         { id: "f500-mhev", name: "1.0 FireFly Hybrid 65 CV - Manuale 6 marce - Trazione Anteriore", price: 17700 },
@@ -495,480 +494,489 @@ export function ConfiguratorPage() {
       renderContent();
     };
 
-    const mainStructure = [
-      jd.div({ className: "w-full h-16 border-b border-neutral-900 bg-black px-6 flex items-center justify-between shrink-0" }, [
-        jd.div({ className: "flex items-center gap-4" }, [
-          jd.a({ 
-            href: "/homepage",
-            className: "btn btn-ghost btn-circle text-neutral-400 hover:text-white flex items-center justify-center" 
-          }, [
-            jd.lucide("ArrowLeft", { className: "size-5" })
-          ]),
-          jd.div({ className: "flex flex-col text-left" }, [
-            jd.span({ className: "text-[10px] uppercase font-bold tracking-widest text-neutral-500" }, ["Fillantis"]),
-            jd.span({ className: "text-sm font-black uppercase tracking-wider" }, ["Configuratore"])
-          ])
+    // 1. Costruzione Navbar superiore
+    const navbarSuperior = jd.div({ className: "w-full h-16 border-b border-neutral-900 bg-black px-6 flex items-center justify-between shrink-0" }, [
+      jd.div({ className: "flex items-center gap-4" }, [
+        jd.a({ 
+          href: "/homepage",
+          className: "btn btn-ghost btn-circle text-neutral-400 hover:text-white flex items-center justify-center" 
+        }, [
+          jd.lucide("ArrowLeft", { className: "size-5" })
         ]),
-        
-        Steps({ currentStep: currentStep, onStepChange: updateStep }),
-
-        jd.div({ className: "flex items-center gap-2" }, [
-          jd.span({ className: "text-xs font-bold tracking-wider text-neutral-400" }, ["ID: #CFG942"])
+        jd.div({ className: "flex flex-col text-left" }, [
+          jd.span({ className: "text-[10px] uppercase font-bold tracking-widest text-neutral-500" }, ["Fillantis"]),
+          jd.span({ className: "text-sm font-black uppercase tracking-wider" }, ["Configuratore"])
         ])
       ]),
+      
+      Steps({ currentStep: currentStep, onStepChange: updateStep }),
 
-      jd.div({ className: "flex-1 w-full grid grid-cols-1 lg:grid-cols-3 overflow-hidden" }, [
-        
-        jd.div({ className: "lg:col-span-1 bg-black border-r border-neutral-900 overflow-y-auto p-6 flex flex-col gap-8" }, [
-          
-          currentStep === 1 ? jd.div({ className: "flex flex-col gap-6 text-left" }, [
-            jd.div({ className: "flex flex-col gap-2" }, [
-              jd.span({ className: "text-xs font-bold text-red-500 uppercase tracking-widest" }, ["Fase 1"]),
-              jd.h3({ className: "text-xl font-black uppercase tracking-tight" }, ["Seleziona Brand e Modello"]),
-              jd.p({ className: "text-xs text-neutral-400 leading-relaxed font-medium" }, ["Scegli la marca e il modello di partenza per la tua configurazione dal pannello principale."])
-            ])
-          ]) : null,
+      jd.div({ className: "flex items-center gap-2" }, [
+        jd.span({ className: "text-xs font-bold tracking-wider text-neutral-400" }, ["ID: #CFG942"])
+      ])
+    ]);
 
-          currentStep === 2 ? jd.div({ className: "flex flex-col gap-4 text-left" }, [
-            jd.span({ className: "text-xs font-bold text-red-500 uppercase tracking-widest" }, ["Fase 2"]),
-            jd.h3({ className: "text-xl font-black uppercase tracking-tight" }, ["Scegli il motore"]),
-            jd.p({ className: "text-xs text-neutral-400 leading-relaxed font-medium" }, ["Trova la propulsione ideale. Le architetture e i listini sono aggiornati alle ultime specifiche di gamma."])
-          ]) : null,
+    // 2. Costruzione Sidebar Sinistra (Contenuti descrittivi di riepilogo per step)
+    const sidebarLeft = jd.div({ className: "lg:col-span-1 bg-black border-r border-neutral-900 overflow-y-auto p-6 flex flex-col gap-8" }, [
+      currentStep === 1 ? jd.div({ className: "flex flex-col gap-6 text-left" }, [
+        jd.div({ className: "flex flex-col gap-2" }, [
+          jd.span({ className: "text-xs font-bold text-red-500 uppercase tracking-widest" }, ["Fase 1"]),
+          jd.h3({ className: "text-xl font-black uppercase tracking-tight" }, ["Seleziona Brand e Modello"]),
+          jd.p({ className: "text-xs text-neutral-400 leading-relaxed font-medium" }, ["Scegli la marca e il modello di partenza per la tua configurazione dal pannello principale."])
+        ])
+      ]) : null,
 
-          currentStep === 3 ? jd.div({ className: "flex flex-col gap-6" }, [
-            jd.div({ className: "flex flex-col gap-2 text-left" }, [
-              jd.span({ className: "text-xs font-bold text-red-500 uppercase tracking-widest" }, ["Fase 3"]),
-              jd.h3({ className: "text-xl font-black uppercase tracking-tight" }, ["Personalizza gli Esterni"]),
-              jd.p({ className: "text-xs text-neutral-400 leading-relaxed font-medium" }, [
-                `Catalogo originale per ${selectedBrand}. Scegli la verniciatura ufficiale della casa e abbina il design dei cerchi in lega.`
-              ])
-            ])
-          ]) : null,
+      currentStep === 2 ? jd.div({ className: "flex flex-col gap-4 text-left" }, [
+        jd.span({ className: "text-xs font-bold text-red-500 uppercase tracking-widest" }, ["Fase 2"]),
+        jd.h3({ className: "text-xl font-black uppercase tracking-tight" }, ["Scegli il motore"]),
+        jd.p({ className: "text-xs text-neutral-400 leading-relaxed font-medium" }, ["Trova la propulsione ideale. Le architetture e i listini sono aggiornati alle ultime specifiche di gamma."])
+      ]) : null,
 
-          currentStep === 4 ? jd.div({ className: "flex flex-col gap-4 text-left" }, [
-            jd.span({ className: "text-xs font-bold text-red-500 uppercase tracking-widest" }, ["Fase 4"]),
-            jd.h3({ className: "text-xl font-black uppercase tracking-tight" }, ["Configura gli Interni"]),
-            jd.p({ className: "text-xs text-neutral-400 leading-relaxed font-medium" }, [
-              `Abitacolo personalizzato per ${selectedBrand}. Definisci la tipologia di selleria e i materiali delle modanature plancia.`
-            ])
-          ]) : null,
-
-          currentStep === 5 ? jd.div({ className: "flex flex-col gap-4 text-left" }, [
-            jd.span({ className: "text-xs font-bold text-red-500 uppercase tracking-widest" }, ["Fase 5"]),
-            jd.h3({ className: "text-xl font-black uppercase tracking-tight" }, ["Aggiungi i Pacchetti"]),
-            jd.p({ className: "text-xs text-neutral-400 leading-relaxed font-medium" }, [
-              `Sistemi opzionali avanzati per ${selectedBrand}. Seleziona i pacchetti di assistenza e upgrade multimediali desiderati.`
-            ])
-          ]) : null,
-
-          jd.div({ className: "w-full border-t border-neutral-900 pt-6 flex flex-col gap-4 text-left mt-auto" }, [
-            jd.div({ className: "p-4 bg-neutral-900/20 border border-neutral-900 rounded-xl flex flex-col gap-2 text-xs font-medium text-neutral-400" }, [
-              jd.div({ className: "flex justify-between" }, [jd.span({}, ["Prezzo di listino:"]), jd.span({ className: "text-white" }, [formattedListPrice])]),
-              jd.div({ className: "flex justify-between" }, [jd.span({}, ["Optional selezionati:"]), jd.span({ className: "text-white" }, [formattedOptionalPrice])]),
-              jd.div({ className: "w-full h-px bg-neutral-900 my-1" }),
-              jd.div({ className: "flex justify-between items-end" }, [
-                jd.span({ className: "font-bold uppercase tracking-wide text-white" }, ["Totale stimato:"]), 
-                jd.span({ className: "text-xl font-black text-white" }, [formattedTotalPrice])
-              ])
-            ])
+      currentStep === 3 ? jd.div({ className: "flex flex-col gap-6" }, [
+        jd.div({ className: "flex flex-col gap-2 text-left" }, [
+          jd.span({ className: "text-xs font-bold text-red-500 uppercase tracking-widest" }, ["Fase 3"]),
+          jd.h3({ className: "text-xl font-black uppercase tracking-tight" }, ["Personalizza gli Esterni"]),
+          jd.p({ className: "text-xs text-neutral-400 leading-relaxed font-medium" }, [
+            `Catalogo originale per ${selectedBrand}. Scegli la verniciatura ufficiale della casa e abbina il design dei cerchi in lega.`
           ])
-
-        ].filter(Boolean)),
-
-        jd.div({ className: "lg:col-span-2 bg-neutral-900/20 relative flex flex-col items-center justify-center p-6" }, [
-          currentStep === 1 ? 
-            jd.div({ className: "w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-start mt-[-40px]" }, [
-              jd.div({ className: "flex flex-col gap-4 text-left" }, [
-                jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, ["Marca"]),
-                jd.div({ className: "grid grid-cols-2 gap-2" }, 
-                  ["FIAT", "Alfa Romeo", "Lancia", "Abarth", "Audi", "BMW", "Volkswagen", "Mercedes"].map(brand => {
-                    const isBrandSelected = selectedBrand === brand;
-                    return jd.button({
-                      onClick: () => {
-                        selectedBrand = brand;
-                        const models = modelsMap[brand] || [];
-                        selectedModel = models.length > 0 ? models[0] : "";
-                        const engines = enginesMap[selectedModel] || [];
-                        selectedEngine = engines.length > 0 ? engines[0].id : "";
-                        selectedPackages = [];
-                        renderContent();
-                      },
-                      className: `py-2.5 px-4 rounded-lg text-xs font-bold uppercase tracking-wider border transition-colors ${
-                        isBrandSelected ? "bg-white text-black border-white" : "bg-neutral-900 text-neutral-400 border-neutral-800 hover:border-neutral-700"
-                      }`
-                    }, [brand]);
-                  })
-                )
-              ]),
-              jd.div({ className: "flex flex-col gap-4 text-left w-full" }, [
-                jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, ["Modello"]),
-                jd.div({ className: "flex flex-col gap-2 max-h-[380px] overflow-y-auto pr-1" }, 
-                  currentModels.map(model => {
-                    const isModelSelected = selectedModel === model;
-                    return jd.div({
-                      onClick: () => {
-                        selectedModel = model;
-                        const engines = enginesMap[model] || [];
-                        selectedEngine = engines.length > 0 ? engines[0].id : "";
-                        selectedPackages = [];
-                        renderContent();
-                      },
-                      className: `w-full p-4 rounded-xl flex items-center justify-between cursor-pointer transition-colors border ${
-                        isModelSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
-                      }`
-                    }, [
-                      jd.span({ className: "text-sm font-bold uppercase tracking-wide text-white" }, [model]),
-                      jd.span({ className: `text-xs font-bold ${isModelSelected ? "text-red-500" : "text-neutral-500"}` }, [
-                        isModelSelected ? "Selezionato" : "Seleziona"
-                      ])
-                    ]);
-                  })
-                )
-              ])
-            ])
-          : currentStep === 2 ?
-            jd.div({ className: "w-full max-w-2xl flex flex-col gap-4 text-left mt-[-40px]" }, [
-              jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, [
-                `Motorizzazioni disponibili per ${selectedBrand} ${selectedModel}`
-              ]),
-              jd.div({ className: "flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-1" }, 
-                availableEngines.map(engine => {
-                  const isEngineSelected = selectedEngine === engine.id;
-                  return jd.div({
-                    onClick: () => {
-                      selectedEngine = engine.id;
-                      renderContent();
-                    },
-                    className: `w-full p-5 rounded-xl flex items-center justify-between cursor-pointer transition-colors border ${
-                      isEngineSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
-                    }`
-                  }, [
-                    jd.div({ className: "flex flex-col gap-1 text-left max-w-[75%]" }, [
-                      jd.span({ className: "text-sm font-bold text-white uppercase tracking-wide leading-tight" }, [engine.name]),
-                      jd.span({ className: "text-xs text-neutral-400" }, ["omologazione euro 6e specifiche di gamma correnti"])
-                    ]),
-                    jd.div({ className: "flex flex-col items-end gap-1 shrink-0" }, [
-                      jd.span({ className: "text-sm font-black text-white" }, [engine.price.toLocaleString("it-IT") + " €"]),
-                      jd.span({ className: `text-[10px] uppercase font-bold tracking-wider ${isEngineSelected ? "text-red-500" : "text-neutral-500"}` }, [
-                        isEngineSelected ? "Incluso" : "Seleziona"
-                      ])
-                    ])
-                  ]);
-                })
-              )
-            ])
-          : currentStep === 3 ?
-            jd.div({ className: "w-full max-w-3xl flex flex-col gap-8 text-left mt-[-40px]" }, [
-              jd.div({ className: "flex flex-col gap-4" }, [
-                jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, [`1. Tinta Carrozzeria Ufficiale - Gamma ${selectedBrand}`]),
-                jd.div({ className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3" }, 
-                  availableColors.map(color => {
-                    const isColorSelected = selectedColor === color.id;
-                    return jd.div({
-                      onClick: () => {
-                        selectedColor = color.id;
-                        renderContent();
-                      },
-                      className: `p-3 rounded-xl flex items-center gap-3 cursor-pointer transition-colors border ${
-                        isColorSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
-                      }`
-                    }, [
-                      jd.div({ className: `size-6 rounded-full shrink-0 border border-white/10 ${color.colorClass}` }),
-                      jd.div({ className: "flex flex-col text-left overflow-hidden" }, [
-                        jd.span({ className: "text-xs font-bold text-white uppercase tracking-wide truncate max-w-[120px]" }, [color.name]),
-                        jd.span({ className: "text-[10px] text-neutral-400 font-bold" }, [color.price === 0 ? "Incluso" : `+ ${color.price} €`])
-                      ])
-                    ]);
-                  })
-                )
-              ]),
-              jd.div({ className: "flex flex-col gap-4 border-t border-neutral-900 pt-6" }, [
-                jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, ["2. Opzioni Cerchi e Pneumatici"]),
-                jd.div({ className: "flex flex-col gap-2.5" }, 
-                  availableWheels.map(wheel => {
-                    const isWheelSelected = selectedWheel === wheel.id;
-                    return jd.div({
-                      onClick: () => {
-                        selectedWheel = wheel.id;
-                        renderContent();
-                      },
-                      className: `p-4 rounded-xl flex items-center justify-between cursor-pointer transition-colors border ${
-                        isWheelSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
-                      }`
-                    }, [
-                      jd.div({ className: "flex items-center gap-4 text-left" }, [
-                        jd.div({ className: "size-10 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-center font-black text-xs text-neutral-400 shrink-0" }, [
-                          `${wheel.size}"`
-                        ]),
-                        jd.div({ className: "flex flex-col" }, [
-                          jd.span({ className: "text-xs font-bold text-white uppercase tracking-wide" }, [wheel.title]),
-                          jd.span({ className: "text-[10px] text-neutral-500" }, [`assetto e parametri di rotolamento calibrati per ${selectedModel}`])
-                        ])
-                      ]),
-                      jd.span({ className: "text-xs font-black text-white shrink-0 pl-4" }, [
-                        wheel.price === 0 ? "Di serie" : `+ ${wheel.price.toLocaleString("it-IT")} €`
-                      ])
-                    ]);
-                  })
-                )
-              ])
-            ])
-          : currentStep === 4 ?
-            jd.div({ className: "w-full max-w-3xl flex flex-col gap-8 text-left mt-[-40px]" }, [
-              jd.div({ className: "flex flex-col gap-4" }, [
-                jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, [`1. Rivestimento Sedili e Selleria - Gamma ${selectedBrand}`]),
-                jd.div({ className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" }, 
-                  availableInteriors.map(interior => {
-                    const isInteriorSelected = selectedInterior === interior.id;
-                    
-                    const haConflittoInterno = regoleIncompatibilita.some(r => 
-                      (r.a === interior.id && tutteLeSelezioniCorrenti.includes(r.b)) ||
-                      (r.b === interior.id && tutteLeSelezioniCorrenti.includes(r.a))
-                    );
-
-                    return jd.div({
-                      onClick: () => {
-                        if (haConflittoInterno) {
-                          alert("questo rivestimento interno non e compatibile con uno dei pacchetti scelti nella fase successiva!");
-                          return;
-                        }
-                        selectedInterior = interior.id;
-                        renderContent();
-                      },
-                      className: `p-3 rounded-xl flex items-center gap-3 transition-colors border ${
-                        haConflittoInterno ? "opacity-30 border-neutral-900 cursor-not-allowed bg-neutral-950/40" : "cursor-pointer"
-                      } ${
-                        isInteriorSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
-                      }`
-                    }, [
-                      jd.div({ className: `size-6 rounded-md shrink-0 border border-white/10 ${interior.colorClass}` }),
-                      jd.div({ className: "flex flex-col text-left overflow-hidden" }, [
-                        jd.span({ className: "text-xs font-bold text-white uppercase tracking-wide truncate max-w-[160px]" }, [interior.name]),
-                        jd.span({ className: "text-[10px] font-bold " + (haConflittoInterno ? "text-red-500" : "text-neutral-400") }, [
-                          haConflittoInterno ? "incompatibile" : (interior.price === 0 ? "Di serie" : `+ ${interior.price} €`)
-                        ])
-                      ])
-                    ]);
-                  })
-                )
-              ]),
-              jd.div({ className: "flex flex-col gap-4 border-t border-neutral-900 pt-6" }, [
-                jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, ["2. Architettura Plancia e Modanature Interne"]),
-                jd.div({ className: "flex flex-col gap-2.5" }, 
-                  availableDashboards.map(dash => {
-                    const isDashSelected = selectedDashboard === dash.id;
-                    return jd.div({
-                      onClick: () => {
-                        selectedDashboard = dash.id;
-                        renderContent();
-                      },
-                      className: `p-4 rounded-xl flex items-center justify-between cursor-pointer transition-colors border ${
-                        isDashSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
-                      }`
-                    }, [
-                      jd.div({ className: "flex items-center gap-4 text-left" }, [
-                        jd.div({ className: "size-8 bg-neutral-900 border border-neutral-800 rounded flex items-center justify-center shrink-0" }, [
-                          jd.lucide("Layers", { className: "size-4 text-neutral-500" })
-                        ]),
-                        jd.div({ className: "flex flex-col" }, [
-                          jd.span({ className: "text-xs font-bold text-white uppercase tracking-wide" }, [dash.title]),
-                          jd.span({ className: "text-[10px] text-neutral-500" }, [`finiture coordinate con l estetica di ${selectedModel}`])
-                        ])
-                      ]),
-                      jd.span({ className: "text-xs font-black text-white shrink-0 pl-4" }, [
-                        dash.price === 0 ? "Incluso" : `+ ${dash.price.toLocaleString("it-IT")} €`
-                      ])
-                    ]);
-                  })
-                )
-              ])
-            ])
-          : currentStep === 5 ?
-            jd.div({ className: "w-full max-w-3xl flex flex-col gap-4 text-left mt-[-40px]" }, [
-              jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, [
-                `Sistemi opzionali e pacchetti di equipaggiamento - Gamma ${selectedBrand}`
-              ]),
-              jd.div({ className: "flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-1" }, 
-                availablePackages.map(pkg => {
-                  const isPkgSelected = selectedPackages.includes(pkg.id);
-                  
-                  const haConflittoPacchetto = !isPkgSelected && regoleIncompatibilita.some(r => 
-                    (r.a === pkg.id && tutteLeSelezioniCorrenti.includes(r.b)) ||
-                    (r.b === pkg.id && tutteLeSelezioniCorrenti.includes(r.a))
-                  );
-
-                  return jd.div({
-                    onClick: () => togglePackage(pkg.id),
-                    className: `w-full p-5 rounded-xl flex items-center justify-between transition-colors border ${
-                      haConflittoPacchetto ? "opacity-35 border-neutral-900 cursor-not-allowed bg-neutral-950/40" : "cursor-pointer"
-                    } ${
-                      isPkgSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
-                    }`
-                  }, [
-                    jd.div({ className: "flex items-center gap-4 text-left max-w-[75%]" }, [
-                      jd.div({ className: `size-10 rounded-lg flex items-center justify-center shrink-0 border ${
-                        haConflittoPacchetto ? "bg-neutral-900 border-neutral-900 text-neutral-700" :
-                        isPkgSelected ? "bg-red-950/40 border-red-800 text-red-500" : "bg-neutral-900 border-neutral-800 text-neutral-500"
-                      }` }, [
-                        jd.lucide(haConflittoPacchetto ? "AlertTriangle" : (isPkgSelected ? "CheckSquare" : "Square"), { className: "size-5" })
-                      ]),
-                      jd.div({ className: "flex flex-col gap-0.5" }, [
-                        jd.span({ className: "text-sm font-bold text-white uppercase tracking-wide leading-tight" }, [pkg.title]),
-                        jd.span({ className: "text-xs text-neutral-400 leading-normal" }, [pkg.desc])
-                      ])
-                    ]),
-                    jd.div({ className: "flex flex-col items-end gap-1 shrink-0 pl-4" }, [
-                      jd.span({ className: "text-sm font-black text-white" }, [
-                        haConflittoPacchetto ? "bloccato" : `+ ${pkg.price.toLocaleString("it-IT")} €`
-                      ]),
-                      jd.span({ className: `text-[10px] uppercase font-bold tracking-wider ${haConflittoPacchetto ? "text-red-500" : isPkgSelected ? "text-red-500" : "text-neutral-500"}` }, [
-                        haConflittoPacchetto ? "incompatibile" : (isPkgSelected ? "Selezionato" : "Aggiungi")
-                      ])
-                    ])
-                  ]);
-                })
-              )
-            ])
-          : 
-            jd.div({ className: "w-full max-w-3xl aspect-[16/9] flex items-center justify-center relative mt-[-40px]" }, [
-              jd.img({ 
-                src: "/car-render.png", 
-                alt: "Configurator View", 
-                className: "w-full h-full object-contain select-none" 
-              })
-            ])
         ])
+      ]) : null,
 
-      ]),
+      currentStep === 4 ? jd.div({ className: "flex flex-col gap-4 text-left" }, [
+        jd.span({ className: "text-xs font-bold text-red-500 uppercase tracking-widest" }, ["Fase 4"]),
+        jd.h3({ className: "text-xl font-black uppercase tracking-tight" }, ["Configura gli Interni"]),
+        jd.p({ className: "text-xs text-neutral-400 leading-relaxed font-medium" }, [
+          `Abitacolo personalizzato per ${selectedBrand}. Definisci la tipologia di selleria e i materiali delle modanature plancia.`
+        ])
+      ]) : null,
 
-     jd.div({ className: "w-full h-20 border-t border-neutral-900 bg-neutral-950 px-6 flex items-center justify-between shrink-0 z-10" }, [
-        jd.div({ className: "flex flex-col text-left" }, []),
-        
-        jd.div({ className: "flex items-center gap-4" }, [
-          jd.button({ 
-            onClick: async () => {
-              if (currentStep === 5) {
-                showLoader("Salvataggio e generazione preventivo...");
+      currentStep === 5 ? jd.div({ className: "flex flex-col gap-4 text-left" }, [
+        jd.span({ className: "text-xs font-bold text-red-500 uppercase tracking-widest" }, ["Fase 5"]),
+        jd.h3({ className: "text-xl font-black uppercase tracking-tight" }, ["Aggiungi i Pacchetti"]),
+        jd.p({ className: "text-xs text-neutral-400 leading-relaxed font-medium" }, [
+          `Sistemi opzionali avanzati per ${selectedBrand}. Seleziona i pacchetti di assistenza e upgrade multimediali desiderati.`
+        ])
+      ]) : null,
 
-                const loggedUserId = localStorage.getItem("userId") || "1";
-
-                let mappingAbbinamentoId = 1;
-                if (selectedModel === "Tonale") mappingAbbinamentoId = 1;
-                else if (selectedModel === "500e" || selectedModel === "500") mappingAbbinamentoId = 2;
-                else if (selectedModel === "Ypsilon") mappingAbbinamentoId = 3;
-                else if (selectedModel === "Grande Panda") mappingAbbinamentoId = 4;
-                else if (selectedModel === "Topolino") mappingAbbinamentoId = 5;
-                else if (selectedModel === "Giulia") mappingAbbinamentoId = 6;
-                else if (selectedModel === "Stelvio") mappingAbbinamentoId = 7;
-                else if (selectedModel === "600e") mappingAbbinamentoId = 8;
-                else if (selectedModel === "A3") mappingAbbinamentoId = 9;
-                else if (selectedModel === "A5") mappingAbbinamentoId = 10;
-                else if (selectedModel === "Q5") mappingAbbinamentoId = 11;
-                else if (selectedModel === "Serie 1") mappingAbbinamentoId = 12;
-                else if (selectedModel === "Serie 3") mappingAbbinamentoId = 13;
-                else if (selectedModel === "X1") mappingAbbinamentoId = 14;
-                else if (selectedModel === "Golf") mappingAbbinamentoId = 15;
-                else if (selectedModel === "Polo") mappingAbbinamentoId = 16;
-                else if (selectedModel === "Tiguan") mappingAbbinamentoId = 17;
-                else if (selectedModel === "Classe A") mappingAbbinamentoId = 18;
-                else if (selectedModel === "Classe C") mappingAbbinamentoId = 19;
-                else if (selectedModel === "GLA") mappingAbbinamentoId = 20;
-
-                const listaOptionalScelti = [];
-
-                const mappaOptionalAIdDatabase = (frontEndId) => {
-                  const dizionarioId = {
-                    "fi-c1": 1, "fi-c2": 2, "fi-c3": 3, "fi-c4": 4,
-                    "fi-w1": 5, "fi-w2": 6, "fi-i1": 7, "fi-i2": 8, "fi-d1": 9, "fi-d2": 10, "fi-p1": 11, "fi-p2": 12,
-                    "al-c1": 13, "al-c2": 14, "al-c3": 15, "al-c4": 16,
-                    "al-w1": 17, "al-w2": 18, "al-w3": 19, "al-i1": 20, "al-i2": 21, "al-i3": 22, "al-d1": 23, "al-d2": 24, "al-p1": 25, "al-p2": 26,
-                    "la-c1": 27, "la-c2": 28, "la-c3": 29, "la-c4": 30,
-                    "la-w1": 31, "la-w2": 32, "la-i1": 33, "la-i2": 34, "la-d1": 35, "la-d2": 36, "la-p1": 37, "la-p2": 38,
-                    "ab-c1": 39, "ab-c2": 40, "ab-c3": 41, "ab-c4": 42,
-                    "ab-w1": 43, "ab-w2": 44, "ab-i1": 45, "ab-i2": 46, "ab-d1": 47, "ab-d2": 48, "ab-p1": 49, "ab-p2": 50,
-                    "au-c1": 51, "au-c2": 52, "au-c3": 53, "au-c4": 54,
-                    "au-w1": 55, "au-w2": 56, "au-w3": 57, "au-i1": 58, "au-i2": 59, "au-i3": 60, "au-d1": 61, "au-d2": 62, "au-d3": 63, "au-p1": 64, "au-p2": 65, "au-p3": 66,
-                    "bm-c1": 67, "bm-c2": 68, "bm-c3": 69, "bm-c4": 70,
-                    "bm-w1": 71, "bm-w2": 72, "bm-w3": 73, "bm-i1": 74, "bm-i2": 75, "bm-i3": 76, "bm-d1": 77, "bm-d2": 78, "bm-d3": 79, "bm-p1": 80, "bm-p2": 81, "bm-p3": 82,
-                    "vw-c1": 83, "vw-c2": 84, "vw-c3": 85, "vw-c4": 86,
-                    "vw-w1": 87, "vw-w2": 88, "vw-w3": 89, "vw-i1": 90, "vw-i2": 91, "vw-i3": 92, "vw-d1": 93, "vw-d2": 94, "vw-p1": 95, "vw-p2": 96, "vw-p3": 97,
-                    "me-c1": 98, "me-c2": 99, "me-c3": 100, "me-c4": 101,
-                    "me-w1": 102, "me-w2": 103, "me-w3": 104, "me-i1": 105, "me-i2": 106, "me-i3": 107, "me-d1": 108, "me-d2": 109, "me-d3": 110, "me-p1": 111, "me-p2": 112, "me-p3": 113
-                  };
-                  return dizionarioId[frontEndId] || null;
-                };
-
-                if (currentColorObj && currentColorObj.price > 0) {
-                  const idDb = mappaOptionalAIdDatabase(selectedColor);
-                  if (idDb) listaOptionalScelti.push(idDb);
-                }
-
-                if (currentWheelObj && currentWheelObj.price > 0) {
-                  const idDb = mappaOptionalAIdDatabase(selectedWheel);
-                  if (idDb) listaOptionalScelti.push(idDb);
-                }
-
-                if (currentInteriorObj && currentInteriorObj.price > 0) {
-                  const idDb = mappaOptionalAIdDatabase(selectedInterior);
-                  if (idDb) listaOptionalScelti.push(idDb);
-                }
-
-                if (currentDashboardObj && currentDashboardObj.price > 0) {
-                  const idDb = mappaOptionalAIdDatabase(selectedDashboard);
-                  if (idDb) listaOptionalScelti.push(idDb);
-                }
-
-                selectedPackages.forEach(pkgId => {
-                  const idDb = mappaOptionalAIdDatabase(pkgId);
-                  if (idDb) {
-                    listaOptionalScelti.push(idDb);
-                  } else {
-                    listaOptionalScelti.push(1);
-                  }
-                });
-
-                const payload = {
-                  id_utente: parseInt(loggedUserId),
-                  id_abbinamento: mappingAbbinamentoId,
-                  optional: listaOptionalScelti
-                };
-
-                try {
-                  console.log("PAYLOAD REALE INVIATO A FLASK:", payload);
-                  
-                  const response = await fetch("http://localhost:5000/api/preventivi", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                  });
-
-                  const result = await response.json();
-                  hideLoader();
-
-                  if (result.success) {
-                    alert("Configurazione reale registrata con successo!");
-                    window.location.href = "/preventivi";
-                  } else {
-                    alert("Errore del server: " + result.errore);
-                  }
-                } catch (error) {
-                  hideLoader();
-                  console.error("Errore di rete:", error);
-                  alert("Impossibile connettersi al server Flask.");
-                }
-              } else {
-                handleNext();
-              }
-            },
-            className: "px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider rounded transition-colors shadow-lg shadow-red-600/20 cursor-pointer" 
-          }, [
-            currentStep === 5 ? "Completa Ordine" : "Prosegui"
+      jd.div({ className: "w-full border-t border-neutral-900 pt-6 flex flex-col gap-4 text-left mt-auto" }, [
+        jd.div({ className: "p-4 bg-neutral-900/20 border border-neutral-900 rounded-xl flex flex-col gap-2 text-xs font-medium text-neutral-400" }, [
+          jd.div({ className: "flex justify-between" }, [jd.span({}, ["Prezzo di listino:"]), jd.span({ className: "text-white" }, [formattedListPrice])]),
+          jd.div({ className: "flex justify-between" }, [jd.span({}, ["Optional selezionati:"]), jd.span({ className: "text-white" }, [formattedOptionalPrice])]),
+          jd.div({ className: "w-full h-px bg-neutral-900 my-1" }),
+          jd.div({ className: "flex justify-between items-end" }, [
+            jd.span({ className: "font-bold uppercase tracking-wide text-white" }, ["Totale stimato:"]), 
+            jd.span({ className: "text-xl font-black text-white" }, [formattedTotalPrice])
           ])
         ])
       ])
-    ];
+    ].filter(Boolean));
 
-    mainStructure.forEach(el => container.appendChild(el));
+    // 3. Costruzione Pannello di Destra (Opzioni di scelta cliccabili)
+    const centralInteractiveView = jd.div({ className: "lg:col-span-2 bg-neutral-900/20 relative flex flex-col items-center justify-center p-6" }, [
+      currentStep === 1 ? 
+        jd.div({ className: "w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-start mt-[-40px]" }, [
+          jd.div({ className: "flex flex-col gap-4 text-left" }, [
+            jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, ["Marca"]),
+            jd.div({ className: "grid grid-cols-2 gap-2" }, 
+              ["FIAT", "Alfa Romeo", "Lancia", "Abarth", "Audi", "BMW", "Volkswagen", "Mercedes"].map(brand => {
+                const isBrandSelected = selectedBrand === brand;
+                return jd.button({
+                  onClick: () => {
+                    selectedBrand = brand;
+                    const models = modelsMap[brand] || [];
+                    selectedModel = models.length > 0 ? models[0] : "";
+                    const engines = enginesMap[selectedModel] || [];
+                    selectedEngine = engines.length > 0 ? engines[0].id : "";
+                    selectedPackages = [];
+                    renderContent();
+                  },
+                  className: `py-2.5 px-4 rounded-lg text-xs font-bold uppercase tracking-wider border transition-colors ${
+                    isBrandSelected ? "bg-white text-black border-white" : "bg-neutral-900 text-neutral-400 border-neutral-800 hover:border-neutral-700"
+                  }`
+                }, [brand]);
+              })
+            )
+          ]),
+          jd.div({ className: "flex flex-col gap-4 text-left w-full" }, [
+            jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, ["Modello"]),
+            jd.div({ className: "flex flex-col gap-2 max-h-[380px] overflow-y-auto pr-1" }, 
+              currentModels.map(model => {
+                const isModelSelected = selectedModel === model;
+                return jd.div({
+                  onClick: () => {
+                    selectedModel = model;
+                    const engines = enginesMap[model] || [];
+                    selectedEngine = engines.length > 0 ? engines[0].id : "";
+                    selectedPackages = [];
+                    renderContent();
+                  },
+                  className: `w-full p-4 rounded-xl flex items-center justify-between cursor-pointer transition-colors border ${
+                    isModelSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
+                  }`
+                }, [
+                  jd.span({ className: "text-sm font-bold uppercase tracking-wide text-white" }, [model]),
+                  jd.span({ className: `text-xs font-bold ${isModelSelected ? "text-red-500" : "text-neutral-500"}` }, [
+                    isModelSelected ? "Selezionato" : "Seleziona"
+                  ])
+                ]);
+              })
+            )
+          ])
+        ])
+      : currentStep === 2 ?
+        jd.div({ className: "w-full max-w-2xl flex flex-col gap-4 text-left mt-[-40px]" }, [
+          jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, [
+            `Motorizzazioni disponibili per ${selectedBrand} ${selectedModel}`
+          ]),
+          jd.div({ className: "flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-1" }, 
+            availableEngines.map(engine => {
+              const isEngineSelected = selectedEngine === engine.id;
+              return jd.div({
+                onClick: () => {
+                  selectedEngine = engine.id;
+                  renderContent();
+                },
+                className: `w-full p-5 rounded-xl flex items-center justify-between cursor-pointer transition-colors border ${
+                  isEngineSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
+                }`
+              }, [
+                jd.div({ className: "flex flex-col gap-1 text-left max-w-[75%]" }, [
+                  jd.span({ className: "text-sm font-bold text-white uppercase tracking-wide leading-tight" }, [engine.name]),
+                  jd.span({ className: "text-xs text-neutral-400" }, ["omologazione euro 6e specifiche di gamma correnti"])
+                ]),
+                jd.div({ className: "flex flex-col items-end gap-1 shrink-0" }, [
+                  jd.span({ className: "text-sm font-black text-white" }, [engine.price.toLocaleString("it-IT") + " €"]),
+                  jd.span({ className: `text-[10px] uppercase font-bold tracking-wider ${isEngineSelected ? "text-red-500" : "text-neutral-500"}` }, [
+                    isEngineSelected ? "Incluso" : "Seleziona"
+                  ])
+                ])
+              ]);
+            })
+          )
+        ]) // <-- 🛠️ FISSO 1: Questa riga chiude correttamente il contenitore di step 2
+      : currentStep === 3 ? // <-- 🛠️ FISSO 2: Aggiunto il ":" mancante per l'else-if ternario
+        jd.div({ className: "w-full max-w-3xl flex flex-col gap-8 text-left mt-[-40px]" }, [
+          jd.div({ className: "flex flex-col gap-4" }, [
+            jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, [`1. Tinta Carrozzeria Ufficiale - Gamma ${selectedBrand}`]),
+            jd.div({ className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3" }, 
+              availableColors.map(color => {
+                const isColorSelected = selectedColor === color.id;
+                return jd.div({
+                  onClick: () => {
+                    selectedColor = color.id;
+                    renderContent();
+                  },
+                  className: `p-3 rounded-xl flex items-center gap-3 cursor-pointer transition-colors border ${
+                    isColorSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
+                  }`
+                }, [
+                  jd.div({ className: `size-6 rounded-full shrink-0 border border-white/10 ${color.colorClass}` }),
+                  jd.div({ className: "flex flex-col text-left overflow-hidden" }, [
+                    jd.span({ className: "text-xs font-bold text-white uppercase tracking-wide truncate max-w-[120px]" }, [color.name]),
+                    jd.span({ className: "text-[10px] text-neutral-400 font-bold" }, [color.price === 0 ? "Incluso" : `+ ${color.price} €`])
+                  ])
+                ]);
+              })
+            )
+          ]),
+          jd.div({ className: "flex flex-col gap-4 border-t border-neutral-900 pt-6" }, [
+            jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, ["2. Opzioni Cerchi e Pneumatici"]),
+            jd.div({ className: "flex flex-col gap-2.5" }, 
+              availableWheels.map(wheel => {
+                const isWheelSelected = selectedWheel === wheel.id;
+                return jd.div({
+                  onClick: () => {
+                    selectedWheel = wheel.id;
+                    renderContent();
+                  },
+                  className: `p-4 rounded-xl flex items-center justify-between cursor-pointer transition-colors border ${
+                    isWheelSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
+                  }`
+                }, [
+                  jd.div({ className: "flex items-center gap-4 text-left" }, [
+                    jd.div({ className: "size-10 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-center font-black text-xs text-neutral-400 shrink-0" }, [
+                      `${wheel.size}"`
+                    ]),
+                    jd.div({ className: "flex flex-col" }, [
+                      jd.span({ className: "text-xs font-bold text-white uppercase tracking-wide" }, [wheel.title]),
+                      jd.span({ className: "text-[10px] text-neutral-500" }, [`assetto e parametri di rotolamento calibrati per ${selectedModel}`])
+                    ])
+                  ]),
+                  jd.span({ className: "text-xs font-black text-white shrink-0 pl-4" }, [
+                    wheel.price === 0 ? "Di serie" : `+ ${wheel.price.toLocaleString("it-IT")} €`
+                  ])
+                ]);
+              })
+            )
+          ])
+        ])
+      : currentStep === 4 ?
+        jd.div({ className: "w-full max-w-3xl flex flex-col gap-8 text-left mt-[-40px]" }, [
+          jd.div({ className: "flex flex-col gap-4" }, [
+            jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, [`1. Rivestimento Sedili e Selleria - Gamma ${selectedBrand}`]),
+            jd.div({ className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" }, 
+              availableInteriors.map(interior => {
+                const isInteriorSelected = selectedInterior === interior.id;
+                
+                const haConflittoInterno = regoleIncompatibilita.some(r => 
+                  (r.a === interior.id && tutteLeSelezioniCorrenti.includes(r.b)) ||
+                  (r.b === interior.id && tutteLeSelezioniCorrenti.includes(r.a))
+                );
+
+                return jd.div({
+                  onClick: () => {
+                    if (haConflittoInterno) {
+                      alert("questo rivestimento interno non e compatibile con uno dei pacchetti scelti nella fase successiva!");
+                      return;
+                    }
+                    selectedInterior = interior.id;
+                    renderContent();
+                  },
+                  className: `p-3 rounded-xl flex items-center gap-3 transition-colors border ${
+                    haConflittoInterno ? "opacity-30 border-neutral-900 cursor-not-allowed bg-neutral-950/40" : "cursor-pointer"
+                  } ${
+                    isInteriorSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
+                  }`
+                }, [
+                  jd.div({ className: `size-6 rounded-md shrink-0 border border-white/10 ${interior.colorClass}` }),
+                  jd.div({ className: "flex flex-col text-left overflow-hidden" }, [
+                    jd.span({ className: "text-xs font-bold text-white uppercase tracking-wide truncate max-w-[160px]" }, [interior.name]),
+                    jd.span({ className: "text-[10px] font-bold " + (haConflittoInterno ? "text-red-500" : "text-neutral-400") }, [
+                      haConflittoInterno ? "incompatibile" : (interior.price === 0 ? "Di serie" : `+ ${interior.price} €`)
+                    ])
+                  ])
+                ]);
+              })
+            )
+          ]),
+          jd.div({ className: "flex flex-col gap-4 border-t border-neutral-900 pt-6" }, [
+            jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, ["2. Architettura Plancia e Modanature Interne"]),
+            jd.div({ className: "flex flex-col gap-2.5" }, 
+              availableDashboards.map(dash => {
+                const isDashSelected = selectedDashboard === dash.id;
+                return jd.div({
+                  onClick: () => {
+                    selectedDashboard = dash.id;
+                    renderContent();
+                  },
+                  className: `p-4 rounded-xl flex items-center justify-between cursor-pointer transition-colors border ${
+                    isDashSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
+                  }`
+                }, [
+                  jd.div({ className: "flex items-center gap-4 text-left" }, [
+                    jd.div({ className: "size-8 bg-neutral-900 border border-neutral-800 rounded flex items-center justify-center shrink-0" }, [
+                      jd.lucide("Layers", { className: "size-4 text-neutral-500" })
+                    ]),
+                    jd.div({ className: "flex flex-col" }, [
+                      jd.span({ className: "text-xs font-bold text-white uppercase tracking-wide" }, [dash.title]),
+                      jd.span({ className: "text-[10px] text-neutral-500" }, [`finiture coordinate con l estetica di ${selectedModel}`])
+                    ])
+                  ]),
+                  jd.span({ className: "text-xs font-black text-white shrink-0 pl-4" }, [
+                    dash.price === 0 ? "Incluso" : `+ ${dash.price.toLocaleString("it-IT")} €`
+                  ])
+                ]);
+              })
+            )
+          ])
+        ])
+      : currentStep === 5 ?
+        jd.div({ className: "w-full max-w-3xl flex flex-col gap-4 text-left mt-[-40px]" }, [
+          jd.span({ className: "text-xs font-bold text-neutral-400 uppercase tracking-wider" }, [
+            `Sistemi opzionali e pacchetti di equipaggiamento - Gamma ${selectedBrand}`
+          ]),
+          jd.div({ className: "flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-1" }, 
+            availablePackages.map(pkg => {
+              const isPkgSelected = selectedPackages.includes(pkg.id);
+              
+              const haConflittoPacchetto = !isPkgSelected && regoleIncompatibilita.some(r => 
+                (r.a === pkg.id && tutteLeSelezioniCorrenti.includes(r.b)) ||
+                (r.b === pkg.id && tutteLeSelezioniCorrenti.includes(r.a))
+              );
+
+              return jd.div({
+                onClick: () => togglePackage(pkg.id),
+                className: `w-full p-5 rounded-xl flex items-center justify-between transition-colors border ${
+                  haConflittoPacchetto ? "opacity-35 border-neutral-900 cursor-not-allowed bg-neutral-950/40" : "cursor-pointer"
+                } ${
+                  isPkgSelected ? "bg-neutral-900 border-red-500" : "bg-neutral-950 border-neutral-900 hover:border-neutral-800"
+                }`
+              }, [
+                jd.div({ className: "flex items-center gap-4 text-left max-w-[75%]" }, [
+                  jd.div({ className: `size-10 rounded-lg flex items-center justify-center shrink-0 border ${
+                    haConflittoPacchetto ? "bg-neutral-900 border-neutral-900 text-neutral-700" :
+                    isPkgSelected ? "bg-red-950/40 border-red-800 text-red-500" : "bg-neutral-900 border-neutral-800 text-neutral-500"
+                  }` }, [
+                    jd.lucide(haConflittoPacchetto ? "AlertTriangle" : (isPkgSelected ? "CheckSquare" : "Square"), { className: "size-5" })
+                  ]),
+                  jd.div({ className: "flex flex-col gap-0.5" }, [
+                    jd.span({ className: "text-sm font-bold text-white uppercase tracking-wide leading-tight" }, [pkg.title]),
+                    jd.span({ className: "text-xs text-neutral-400 leading-normal" }, [pkg.desc])
+                  ])
+                ]),
+                jd.div({ className: "flex flex-col items-end gap-1 shrink-0 pl-4" }, [
+                  jd.span({ className: "text-sm font-black text-white" }, [
+                    haConflittoPacchetto ? "bloccato" : `+ ${pkg.price.toLocaleString("it-IT")} €`
+                  ]),
+                  jd.span({ className: `text-[10px] uppercase font-bold tracking-wider ${haConflittoPacchetto ? "text-red-500" : isPkgSelected ? "text-red-500" : "text-neutral-500"}` }, [
+                    haConflittoPacchetto ? "incompatibile" : (isPkgSelected ? "Selezionato" : "Aggiungi")
+                  ])
+                ])
+              ]);
+            })
+          )
+        ])
+      : 
+        jd.div({ className: "w-full max-w-3xl aspect-[16/9] flex items-center justify-center relative mt-[-40px]" }, [
+          jd.img({ 
+            src: "/car-render.png", 
+            alt: "Configurator View", 
+            className: "w-full h-full object-contain select-none" 
+          })
+        ])
+    ]);
+
+    // 4. Costruzione Sezione Centrale (Grid a 3 colonne sdoppiata in Sidebar e Vista Attiva)
+    const centralLayoutGrid = jd.div({ className: "flex-1 w-full grid grid-cols-1 lg:grid-cols-3 overflow-hidden" }, [
+      sidebarLeft,
+      centralInteractiveView
+    ]);
+
+    // 5. Costruzione Barra comandi inferiore (Footer fissato in basso)
+    const bottomActionBar = jd.div({ className: "w-full h-20 border-t border-neutral-900 bg-neutral-950 px-6 flex items-center justify-between shrink-0 z-10" }, [
+      jd.div({ className: "flex flex-col text-left" }, []),
+      
+      jd.div({ className: "flex items-center gap-4" }, [
+        jd.button({ 
+          onClick: async () => {
+            if (currentStep === 5) {
+              showLoader("Salvataggio e generazione preventivo...");
+
+              const loggedUserId = localStorage.getItem("userId") || "1";
+              const token = localStorage.getItem("token");
+
+              let mappingAbbinamentoId = 1;
+              if (selectedModel === "Tonale") mappingAbbinamentoId = 1;
+              else if (selectedModel === "500e" || selectedModel === "500") mappingAbbinamentoId = 2;
+              else if (selectedModel === "Ypsilon") mappingAbbinamentoId = 3;
+              else if (selectedModel === "Grande Panda") mappingAbbinamentoId = 4;
+              else if (selectedModel === "Topolino") mappingAbbinamentoId = 5;
+              else if (selectedModel === "Giulia") mappingAbbinamentoId = 6;
+              else if (selectedModel === "Stelvio") mappingAbbinamentoId = 7;
+              else if (selectedModel === "600e") mappingAbbinamentoId = 8;
+              else if (selectedModel === "A3") mappingAbbinamentoId = 9;
+              else if (selectedModel === "A5") mappingAbbinamentoId = 10;
+              else if (selectedModel === "Q5") mappingAbbinamentoId = 11;
+              else if (selectedModel === "Serie 1") mappingAbbinamentoId = 12;
+              else if (selectedModel === "Serie 3") mappingAbbinamentoId = 13;
+              else if (selectedModel === "X1") mappingAbbinamentoId = 14;
+              else if (selectedModel === "Golf") mappingAbbinamentoId = 15;
+              else if (selectedModel === "Polo") mappingAbbinamentoId = 16;
+              else if (selectedModel === "Tiguan") mappingAbbinamentoId = 17;
+              else if (selectedModel === "Classe A") mappingAbbinamentoId = 18;
+              else if (selectedModel === "Classe C") mappingAbbinamentoId = 19;
+              else if (selectedModel === "GLA") mappingAbbinamentoId = 20;
+
+              const listaOptionalScelti = [];
+
+              const mappaOptionalAIdDatabase = (frontEndId) => {
+                const dizionarioId = {
+                  "fi-c1": 1, "fi-c2": 2, "fi-c3": 3, "fi-c4": 4,
+                  "fi-w1": 5, "fi-w2": 6, "fi-i1": 7, "fi-i2": 8, "fi-d1": 9, "fi-d2": 10, "fi-p1": 11, "fi-p2": 12,
+                  "al-c1": 13, "al-c2": 14, "al-c3": 15, "al-c4": 16,
+                  "al-w1": 17, "al-w2": 18, "al-w3": 19, "al-i1": 20, "al-i2": 21, "al-i3": 22, "al-d1": 23, "al-d2": 24, "al-p1": 25, "al-p2": 26,
+                  "la-c1": 27, "la-c2": 28, "la-c3": 29, "la-c4": 30,
+                  "la-w1": 31, "la-w2": 32, "la-i1": 33, "la-i2": 34, "la-d1": 35, "la-d2": 36, "la-p1": 37, "la-p2": 38,
+                  "ab-c1": 39, "ab-c2": 40, "ab-c3": 41, "ab-c4": 42,
+                  "ab-w1": 43, "ab-w2": 44, "ab-i1": 45, "ab-i2": 46, "ab-d1": 47, "ab-d2": 48, "ab-p1": 49, "ab-p2": 50,
+                  "au-c1": 51, "au-c2": 52, "au-c3": 53, "au-c4": 54,
+                  "au-w1": 55, "au-w2": 56, "au-w3": 57, "au-i1": 58, "au-i2": 59, "au-i3": 60, "au-d1": 61, "au-d2": 62, "au-d3": 63, "au-p1": 64, "au-p2": 65, "au-p3": 66,
+                  "bm-c1": 67, "bm-c2": 68, "bm-c3": 69, "bm-c4": 70,
+                  "bm-w1": 71, "bm-w2": 72, "bm-w3": 73, "bm-i1": 74, "bm-i2": 75, "bm-i3": 76, "bm-d1": 77, "bm-d2": 78, "bm-d3": 79, "bm-p1": 80, "bm-p2": 81, "bm-p3": 82,
+                  "vw-c1": 83, "vw-c2": 84, "vw-c3": 85, "vw-c4": 86,
+                  "vw-w1": 87, "vw-w2": 88, "vw-w3": 89, "vw-i1": 90, "vw-i2": 91, "vw-i3": 92, "vw-d1": 93, "vw-d2": 94, "vw-p1": 95, "vw-p2": 96, "vw-p3": 97,
+                  "me-c1": 98, "me-c2": 99, "me-c3": 100, "me-c4": 101,
+                  "me-w1": 102, "me-w2": 103, "me-w3": 104, "me-i1": 105, "me-i2": 106, "me-i3": 107, "me-d1": 108, "me-d2": 109, "me-d3": 110, "me-p1": 111, "me-p2": 112, "me-p3": 113
+                };
+                return dizionarioId[frontEndId] || null;
+              };
+
+              if (currentColorObj && currentColorObj.price > 0) {
+                const idDb = mappaOptionalAIdDatabase(selectedColor);
+                if (idDb) listaOptionalScelti.push(idDb);
+              }
+
+              if (currentWheelObj && currentWheelObj.price > 0) {
+                const idDb = mappaOptionalAIdDatabase(selectedWheel);
+                if (idDb) listaOptionalScelti.push(idDb);
+              }
+
+              if (currentInteriorObj && currentInteriorObj.price > 0) {
+                const idDb = mappaOptionalAIdDatabase(selectedInterior);
+                if (idDb) listaOptionalScelti.push(idDb);
+              }
+
+              if (currentDashboardObj && currentDashboardObj.price > 0) {
+                const idDb = mappaOptionalAIdDatabase(selectedDashboard);
+                if (idDb) listaOptionalScelti.push(idDb);
+              }
+
+              selectedPackages.forEach(pkgId => {
+                const idDb = mappaOptionalAIdDatabase(pkgId);
+                if (idDb) {
+                  listaOptionalScelti.push(idDb);
+                } else {
+                  listaOptionalScelti.push(1);
+                }
+              });
+
+              const payload = {
+                id_utente: parseInt(loggedUserId),
+                id_abbinamento: mappingAbbinamentoId,
+                optional: listaOptionalScelti
+              };
+
+              try {
+                console.log("PAYLOAD REALE INVIATO A FLASK:", payload);
+                
+                const response = await fetch("http://localhost:5000/api/preventivi", {
+                  method: "POST",
+                  headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                  },
+                  body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                hideLoader();
+
+                if (result.success) {
+                  alert("Configurazione reale registrata con successo!");
+                  window.location.href = "/preventivi";
+                } else {
+                  alert("Errore del server: " + result.errore);
+                }
+              } catch (error) {
+                hideLoader();
+                console.error("Errore di rete:", error);
+                alert("Impossibile connettersi al server Flask.");
+              }
+            } else {
+              handleNext();
+            }
+          },
+          className: "px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider rounded transition-colors shadow-lg shadow-red-600/20 cursor-pointer" 
+        }, [
+          currentStep === 5 ? "Completa Ordine" : "Prosegui"
+        ])
+      ])
+    ]);
+
+    // 6. Assemblaggio finale sequenziale dentro il container principale
+    container.appendChild(navbarSuperior);
+    container.appendChild(centralLayoutGrid);
+    container.appendChild(bottomActionBar);
   };
 
   renderContent();
