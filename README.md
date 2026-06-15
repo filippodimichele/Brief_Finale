@@ -5,7 +5,7 @@
 
 # Fillantis - Showroom & Configuratore Automobilistico
 
-Applicazione full-stack per la gestione di uno showroom automobilistico multibrand e la configurazione guidata di veicoli con controllo in tempo reale delle incompatibilità degli optional e salvataggio dei preventivi personalizzati.
+Applicazione full-stack per la gestione di uno showroom automobilistico multibrand e la configurazione guidata di veicoli.
 
 Il progetto unisce un'architettura backend robusta in **Python Flask (MVC)** con autenticazione JWT e database relazionale PostgreSQL, e un frontend nativo ad alte prestazioni realizzato con la libreria **JUST-DOM**.
 
@@ -135,9 +135,9 @@ Per testare le funzionalità e i diversi livelli di accesso protetti, sono preco
 
 ---
 
-## API disponibili
+## API Postman
 
-### Rotte Pubbliche (Nessun token richiesto)
+### Rotte disponibili
 
 | Metodo | Endpoint | Descrizione |
 | --- | --- | --- |
