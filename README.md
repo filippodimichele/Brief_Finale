@@ -15,11 +15,11 @@ Il progetto unisce un'architettura backend robusta in **Python Flask (MVC)** con
 
 ```text
 fillantis-project/
-├── backend/                        # backend flask (mvc)
+├── backend/                        # backend flask 
 │   ├── app.py                      # entry point flask, inizializzazione cors e blueprint
 │   ├── requirements.txt            # dipendenze python
 │   ├── persistence/
-│   │   └── db_config.py            # configurazione sqlalchemy (engine, sessioni)
+│   │   └── db_config.py            # configurazione db 
 │   ├── model/
 │   │   ├── user.py                 # modello utente (tabella app_user)
 │   │   ├── marchio.py              # modello brand automobilistici
