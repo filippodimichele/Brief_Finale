@@ -16,16 +16,19 @@ export function PreventiviPage() {
 
     // recuperiamo il token jwt salvato al login per autenticare le richieste
     const token = localStorage.getItem("token");
-
     const currentPath = window.location.pathname;
 
-    // controllo di sicurezza per la rotta admin
-    if (currentPath === "/preventivi/admin" && currentUser.role !== "admin") {
+    // controllo di sicurezza tassativo per la rotta admin basato sul ruolo reale del database
+    // assumiamo che l'admin abbia id_ruolo o stringa "1" o "admin" nel localstorage
+    const utenteEAdminReale = currentUser.role === "admin" || currentUser.role === "1";
+
+    if (currentPath === "/preventivi/admin" && !utenteEAdminReale) {
       window.location.href = "/login";
       return;
     }
 
-    const isAdmin = currentUser.role === "admin" && currentPath === "/preventivi/admin";
+    // isolamento blindato dello stato admin per evitare switch di ruolo grafici al refresh parziale
+    const isAdmin = utenteEAdminReale && currentPath === "/preventivi/admin";
     let preventiviDaMostrare = [];
 
     // chiamata asincrona condizionale alle api di flask
@@ -81,6 +84,7 @@ export function PreventiviPage() {
 
     // funzione per l'admin per cambiare lo stato del preventivo
     const cambiaStato = async (idPreventivo, nuovoStato) => {
+      if (!isAdmin) return; // blocco di sicurezza locale invalicabile
       showLoader("aggiornamento stato in corso...");
       try {
         const response = await fetch(`http://localhost:5000/api/preventivi/${idPreventivo}/stato`, {
@@ -105,9 +109,10 @@ export function PreventiviPage() {
       }
     };
 
-    // funzione per l'admin per eliminare fisicamente un preventivo dal database
+    // funzione per l'admin per accedere all'eliminazione
     const eliminaPreventivo = async (idPreventivo) => {
-      if (!confirm("Sei sicuro di voler eliminare definitivamente questo preventivo dal sistema? L'azione cancellera a cascata anche gli optional collegati.")) return;
+      if (!isAdmin) return; // blocco di sicurezza locale invalicabile
+      if (!confirm("Sei sicuro di voler eliminare definitivamente questo preventivo dal sistema?")) return;
       
       showLoader("eliminazione record in corso...");
       try {
@@ -145,7 +150,7 @@ export function PreventiviPage() {
         ])
       ]),
       jd.div({ className: "navbar-center flex items-center justify-center" }, [
-        jd.a({ }, [
+        jd.a({}, [
           jd.img({ src: "/image/logo.png", alt: "Logo", className: "h-35 w-65" })
         ])
       ]),
@@ -153,7 +158,7 @@ export function PreventiviPage() {
         jd.div({ className: "flex items-center gap-2 text-xs uppercase tracking-wider font-bold bg-neutral-900 px-3 py-1.5 rounded-full border border-neutral-800 text-white" }, [
           jd.lucide("User", { className: "size-3.5 text-red-500" }),
           jd.span({}, [currentUser.name]),
-          jd.span({ className: "text-[10px] text-neutral-500 font-mono" }, [`(${currentUser.role})`])
+          jd.span({ className: "text-[10px] text-neutral-500 font-mono" }, [`(${isAdmin ? "admin" : "cliente"})`])
         ])
       ])
     ]);
@@ -186,55 +191,54 @@ export function PreventiviPage() {
           ])
         : jd.div({ className: "flex flex-col gap-6" }, [
             jd.div({ className: "w-full border border-neutral-200 rounded-2xl overflow-hidden shadow-sm bg-white" }, [
+              // rimosso il doppio tag table nidificato che rompeva l'albero dom del configuratore
               jd.table({ className: "w-full text-left border-collapse text-neutral-800 text-sm" }, [
-                jd.table({ className: "w-full text-left border-collapse text-neutral-800 text-sm" }, [
-                  jd.thead({ className: "bg-neutral-50 text-neutral-500 font-bold uppercase text-xs tracking-wider border-b border-neutral-200" }, [
-                    jd.tr({}, [
-                      jd.th({ className: "p-4" }, ["ID"]),
-                      isAdmin ? jd.th({ className: "p-4" }, ["Cliente"]) : null,
-                      jd.th({ className: "p-4" }, ["Configurazione Auto"]),
-                      jd.th({ className: "p-4 text-right" }, ["Prezzo Totale"]),
-                      jd.th({ className: "p-4 text-center" }, ["Stato"]),
-                      isAdmin ? jd.th({ className: "p-4 text-center" }, ["Azioni"]) : null
-                    ].filter(Boolean))
-                  ]),
-                  jd.tbody({ className: "divide-y divide-neutral-100 font-medium" }, 
-                    preventiviDaMostrare.map(p => {
-                      let badgeClass = "bg-yellow-50 text-yellow-700 border-yellow-200";
-                      if (p.stato === "approvato") badgeClass = "bg-green-50 text-green-700 border-green-200";
-                      if (p.stato === "rifiutato") badgeClass = "bg-red-50 text-red-700 border-red-200";
+                jd.thead({ className: "bg-neutral-50 text-neutral-500 font-bold uppercase text-xs tracking-wider border-b border-neutral-200" }, [
+                  jd.tr({}, [
+                    jd.th({ className: "p-4" }, ["ID"]),
+                    isAdmin ? jd.th({ className: "p-4" }, ["Cliente"]) : null,
+                    jd.th({ className: "p-4" }, ["Configurazione Auto"]),
+                    jd.th({ className: "p-4 text-right" }, ["Prezzo Totale"]),
+                    jd.th({ className: "p-4 text-center" }, ["Stato"]),
+                    isAdmin ? jd.th({ className: "p-4 text-center" }, ["Azioni"]) : null
+                  ].filter(Boolean))
+                ]),
+                jd.tbody({ className: "divide-y divide-neutral-100 font-medium" }, 
+                  preventiviDaMostrare.map(p => {
+                    let badgeClass = "bg-yellow-50 text-yellow-700 border-yellow-200";
+                    if (p.stato === "approvato") badgeClass = "bg-green-50 text-green-700 border-green-200";
+                    if (p.stato === "rifiutato") badgeClass = "bg-red-50 text-red-700 border-red-200";
 
-                      return jd.tr({ className: "hover:bg-neutral-50/50 transition-colors" }, [
-                        jd.td({ className: "p-4 font-mono text-xs text-neutral-500" }, [`PREV-00${p.id_preventivo}`]),
-                        isAdmin ? jd.td({ className: "p-4 text-neutral-950 font-bold text-xs uppercase" }, [p.nome_cliente || "Utente"]) : null,
-                        jd.td({ className: "p-4 text-neutral-950 font-bold" }, [p.auto_dettaglio || `Modello #${p.id_abbinamento}`]),
-                        jd.td({ className: "p-4 text-right text-red-600 font-bold" }, [`${p.prezzo_totale.toLocaleString('it-IT')} €`]),
-                        jd.td({ className: "p-4 text-center" }, [
-                          jd.span({ className: `px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${badgeClass}` }, [p.stato])
-                        ]),
-                        isAdmin ? jd.td({ className: "p-4 text-center" }, [
-                          jd.div({ className: "flex items-center justify-center gap-2" }, [
-                            jd.button({
-                              onclick: () => cambiaStato(p.id_preventivo, "approvato"),
-                              className: "px-2.5 py-1.5 bg-green-600 hover:bg-green-700 text-white text-[10px] font-bold uppercase tracking-wider rounded transition-colors cursor-pointer"
-                            }, ["Approva"]),
-                            jd.button({
-                              onclick: () => cambiaStato(p.id_preventivo, "rifiutato"),
-                              className: "px-2.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold uppercase tracking-wider rounded transition-colors cursor-pointer"
-                            }, ["Rifiuta"]),
-                            jd.button({
-                              onclick: () => eliminaPreventivo(p.id_preventivo),
-                              className: "px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold uppercase tracking-wider rounded transition-colors flex items-center gap-1 cursor-pointer"
-                            }, [
-                              jd.lucide("Trash", { className: "size-3" }),
-                              "Elimina"
-                            ])
+                    return jd.tr({ className: "hover:bg-neutral-50/50 transition-colors" }, [
+                      jd.td({ className: "p-4 font-mono text-xs text-neutral-500" }, [`PREV-00${p.id_preventivo}`]),
+                      isAdmin ? jd.td({ className: "p-4 text-neutral-950 font-bold text-xs uppercase" }, [p.nome_cliente || "Utente"]) : null,
+                      jd.td({ className: "p-4 text-neutral-950 font-bold" }, [p.auto_dettaglio || `Modello #${p.id_abbinamento}`]),
+                      jd.td({ className: "p-4 text-right text-red-600 font-bold" }, [`${p.prezzo_totale.toLocaleString('it-IT')} €`]),
+                      jd.td({ className: "p-4 text-center" }, [
+                        jd.span({ className: `px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${badgeClass}` }, [p.stato])
+                      ]),
+                      isAdmin ? jd.td({ className: "p-4 text-center" }, [
+                        jd.div({ className: "flex items-center justify-center gap-2" }, [
+                          jd.button({
+                            onclick: () => cambiaStato(p.id_preventivo, "approvato"),
+                            className: "px-2.5 py-1.5 bg-green-600 hover:bg-green-700 text-white text-[10px] font-bold uppercase tracking-wider rounded transition-colors cursor-pointer"
+                          }, ["Approva"]),
+                          jd.button({
+                            onclick: () => cambiaStato(p.id_preventivo, "rifiutato"),
+                            className: "px-2.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold uppercase tracking-wider rounded transition-colors cursor-pointer"
+                          }, ["Rifiuta"]),
+                          jd.button({
+                            onclick: () => eliminaPreventivo(p.id_preventivo),
+                            className: "px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold uppercase tracking-wider rounded transition-colors flex items-center gap-1 cursor-pointer"
+                          }, [
+                            jd.lucide("Trash", { className: "size-3" }),
+                            "Elimina"
                           ])
-                        ]) : null
-                      ].filter(Boolean));
-                    })
-                  )
-                ])
+                        ])
+                      ]) : null
+                    ].filter(Boolean));
+                  })
+                )
               ])
             ]),
             isAdmin ? jd.div({ className: "mt-4 flex flex-col gap-4 text-left" }, [
@@ -252,7 +256,7 @@ export function PreventiviPage() {
     // footer
     const footer = jd.footer({ className: "w-full bg-neutral-950 text-neutral-400 text-sm border-t border-neutral-900 pt-12 pb-6 px-6 mt-auto" }, [
       jd.div({ className: "w-full max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-neutral-600" }, [
-        jd.p({}, [`© ${new Date().getFullYear()} Fillantis S.p.A. Progetto Esercitazione.`]),
+        jd.p({}, `© ${new Date().getFullYear()} Fillantis S.p.A. Progetto Esercitazione.`),
         jd.p({ className: "italic text-neutral-500 max-w-md text-center md:text-right" }, ["uso esclusivo per scopi didattici e simulazioni applicative."])
       ])
     ]);

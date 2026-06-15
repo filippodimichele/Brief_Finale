@@ -1,0 +1,12 @@
+{
+  "tailwindCSS.experimental.classRegex": [
+    ["className:\\s*\"([^\"]*)\"", "([^ ]*)"]
+  ],
+  "tailwindCSS.includeLanguages": {
+    "javascript": "html",
+    "javascriptreact": "html"
+  },
+  "python.analysis.extraPaths": [
+    "./backend"
+  ]
+}
