@@ -135,9 +135,9 @@ Per testare le funzionalità e i diversi livelli di accesso protetti, sono preco
 
 ---
 
-## API disponibili
+## API Postman
 
-### Rotte Pubbliche (Nessun token richiesto)
+### Rotte disponibili
 
 | Metodo | Endpoint | Descrizione |
 | --- | --- | --- |
