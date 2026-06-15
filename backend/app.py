@@ -1,6 +1,6 @@
 # root api
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, g
 from flask_cors import CORS
 from persistence.db_confing import SessionLocal
 from service import (
@@ -10,41 +10,20 @@ from service import (
     preventivo_service,
     utente_service
 )
+# importiamo il blueprint e il decorator dal controller di autenticazione
+from controller.auth_controller import auth_bp, token_required
 
 app = Flask(__name__)
 CORS(app)
 
-
-# autenticazione utente
-
-@app.route('/api/login', methods=['POST'])
-def login():
-    dati = request.json
-    session = SessionLocal()
-    try:
-        utente = utente_service.login(session, dati['email'], dati['password'])
-        
-        # mappatura manuale dei dati utente
-        dati_utente = {
-            "id_utente": utente.id_utente,
-            "nome": utente.nome,
-            "cognome": utente.cognome,
-            "email": utente.email,
-            "id_ruolo": utente.id_ruolo
-        }
-        
-        return jsonify({"success": True, "utente": dati_utente}), 200
-    except ValueError as e:
-        return jsonify({"success": False, "errore": str(e)}), 401
-    except Exception as e:
-        return jsonify({"success": False, "errore": str(e)}), 500
-    finally:
-        session.close()
+# registrazione del blueprint per gestire le rotte di login e auth
+app.register_blueprint(auth_bp)
 
 
 # rotte preventivi
 
 @app.route('/api/preventivi', methods=['POST'])
+@token_required
 def crea_preventivo():
     dati = request.json
     session = SessionLocal()
@@ -52,7 +31,7 @@ def crea_preventivo():
         # la logica di creazione passa per la configurazione
         nuova_config = configurazione_service.crea_configurazione(
             session, 
-            id_utente=dati['id_utente'], 
+            id_utente=g.current_user_id, # usa id estratto in sicurezza dal jwt
             id_abbinamento=dati['id_abbinamento'], 
             lista_optional_ids=dati.get('optional', [])
         )
@@ -69,14 +48,17 @@ def crea_preventivo():
     finally:
         session.close()
 
-# NUOVA: rotta esclusiva dell'admin per leggere l'intero storico globale di tutti i clienti
+# rotta esclusiva dell'admin per leggere l'intero storico globale di tutti i clienti
 @app.route('/api/preventivi/admin', methods=['GET'])
+@token_required
 def get_preventivi_admin_route():
+    # blocco di sicurezza basato sul ruolo dell utente
+    if str(g.current_user_role) != "1": # assumendo che 1 sia l id dell admin nel db
+        return jsonify({"success": False, "errore": "accesso negato, permessi insufficienti!"}), 403
+
     session = SessionLocal()
     try:
-        # recupera l'intera lista globale dal service dedicato dell'admin
         lista = preventivo_service.get_tutti_preventivi(session)
-        
         risultato = []
         for p in lista:
             auto_dettaglio = f"Abbinamento #{p.id_abbinamento}"
@@ -89,7 +71,7 @@ def get_preventivi_admin_route():
                 "id": p.id_preventivo, 
                 "id_preventivo": p.id_preventivo,
                 "id_utente": p.id_utente,
-                "nome_cliente": p.utente.nome if p.utente else "Utente", # mostra il nome all'admin
+                "nome_cliente": p.utente.nome if p.utente else "Utente",
                 "id_abbinamento": p.id_abbinamento,
                 "auto_dettaglio": auto_dettaglio, 
                 "prezzo_totale": float(p.prezzo_totale) if p.prezzo_totale else 0.0,
@@ -112,11 +94,15 @@ def get_preventivi_admin_route():
 
 # rotta per l'utente normale: isola e mostra solo ed esclusivamente i suoi preventivi personali
 @app.route('/api/preventivi/utente/<int:id_utente>', methods=['GET'])
+@token_required
 def get_preventivi_utente_route(id_utente):
+    # controllo incrociato per evitare che un utente legga i preventivi di un altro
+    if g.current_user_id != id_utente and str(g.current_user_role) != "1":
+        return jsonify({"success": False, "errore": "non sei autorizzato a vedere questi dati!"}), 403
+
     session = SessionLocal()
     try:
         lista = preventivo_service.get_preventivi_utente(session, id_utente)
-        
         risultato = []
         for p in lista:
             auto_dettaglio = f"Abbinamento #{p.id_abbinamento}"
@@ -152,8 +138,11 @@ def get_preventivi_utente_route(id_utente):
         session.close()
 
 @app.route('/api/preventivi/<int:id_preventivo>/stato', methods=['PUT'])
+@token_required
 def aggiorna_stato_preventivo_route(id_preventivo):
-    # rotta riservata all'admin per aggiornare lo stato (accettare o rifiutare)
+    if str(g.current_user_role) != "1":
+        return jsonify({"success": False, "errore": "azione riservata agli amministratori!"}), 403
+
     dati = request.json
     session = SessionLocal()
     try:
@@ -172,8 +161,11 @@ def aggiorna_stato_preventivo_route(id_preventivo):
         session.close()
 
 @app.route('/api/preventivi/<int:id_preventivo>', methods=['DELETE'])
+@token_required
 def elimina_preventivo(id_preventivo):
-    # rotta riservata all'admin per eliminare fisicamente un preventivo obsoleto
+    if str(g.current_user_role) != "1":
+        return jsonify({"success": False, "errore": "azione riservata agli amministratori!"}), 403
+
     session = SessionLocal()
     try:
         preventivo_service.elimina_preventivo(session, id_preventivo)
@@ -192,13 +184,11 @@ def elimina_preventivo(id_preventivo):
 
 @app.route('/api/marchi', methods=['GET'])
 def get_catalogo_marchi():
-    # rotta per fornire al frontend la lista dei marchi e i relativi modelli
     session = SessionLocal()
     try:
         marchi = catalogo_service.get_tutti_marchi(session)
         risultato = []
         for m in marchi:
-            # estrae i modelli associati grazie alla relazione di sqlalchemy
             modelli_lista = [
                 {"id_modello": mod.id_modello, "nome_modello": mod.nome_modello} 
                 for mod in m.modelli
